@@ -16,6 +16,7 @@
   <modules>
     <module>model</module>
     <module>classic</module>
+    <module>streaming</module>
   </modules>
 
   <build>
