@@ -17,6 +17,7 @@
     <module>model</module>
     <module>classic</module>
     <module>streaming</module>
+    <module>streaming-rx</module>
   </modules>
 
   <build>
