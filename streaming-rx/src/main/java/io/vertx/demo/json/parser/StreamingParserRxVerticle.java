@@ -52,13 +52,13 @@ public class StreamingParserRxVerticle extends AbstractVerticle {
   }
 
   private static class Accumulator {
-    double total = 0;
+    double total;
     int count;
     DataPoint min;
     DataPoint max;
 
     Statistics toStatistics() {
-      return new Statistics(total / count, min, max);
+      return new Statistics((count == 0) ? 0 : (total / count), min, max);
     }
   }
 }
