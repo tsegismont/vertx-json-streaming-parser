@@ -17,8 +17,8 @@
 package io.vertx.demo.json.parser;
 
 import io.vertx.core.json.Json;
+import io.vertx.demo.json.model.Accumulator;
 import io.vertx.demo.json.model.DataPoint;
-import io.vertx.demo.json.model.Statistics;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.buffer.Buffer;
 import io.vertx.reactivex.core.http.HttpServerRequest;
@@ -54,27 +54,7 @@ public class StreamingParserRxVerticle extends AbstractVerticle {
     parser.toFlowable()
       .filter(jsonEvent -> jsonEvent.type() == VALUE)
       .map(jsonEvent -> jsonEvent.mapTo(DataPoint.class))
-      .collect(Accumulator::new, (accumulator, dataPoint) -> {
-        accumulator.total += dataPoint.getValue();
-        accumulator.count++;
-        if (accumulator.min == null || accumulator.min.getValue() > dataPoint.getValue()) {
-          accumulator.min = dataPoint;
-        }
-        if (accumulator.max == null || accumulator.max.getValue() < dataPoint.getValue()) {
-          accumulator.max = dataPoint;
-        }
-      }).map(Accumulator::toStatistics)
+      .collect(Accumulator::new, Accumulator::accumulate).map(Accumulator::toStatistics)
       .subscribe(statistics -> routingContext.response().end(Buffer.newInstance(Json.encodeToBuffer(statistics))));
-  }
-
-  private static class Accumulator {
-    double total;
-    int count;
-    DataPoint min;
-    DataPoint max;
-
-    Statistics toStatistics() {
-      return new Statistics((count == 0) ? 0 : (total / count), min, max);
-    }
   }
 }

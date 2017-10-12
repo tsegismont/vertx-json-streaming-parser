@@ -20,8 +20,8 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.Json;
 import io.vertx.core.parsetools.JsonParser;
+import io.vertx.demo.json.model.Accumulator;
 import io.vertx.demo.json.model.DataPoint;
-import io.vertx.demo.json.model.Statistics;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.ResponseContentTypeHandler;
@@ -54,14 +54,7 @@ public class StreamingParserVerticle extends AbstractVerticle {
     parser.handler(event -> {
       if (event.type() == VALUE) {
         DataPoint dataPoint = event.mapTo(DataPoint.class);
-        accumulator.total += dataPoint.getValue();
-        accumulator.count++;
-        if (accumulator.min == null || accumulator.min.getValue() > dataPoint.getValue()) {
-          accumulator.min = dataPoint;
-        }
-        if (accumulator.max == null || accumulator.max.getValue() < dataPoint.getValue()) {
-          accumulator.max = dataPoint;
-        }
+        accumulator.accumulate(dataPoint);
       }
     });
     request.handler(parser);
@@ -70,16 +63,5 @@ public class StreamingParserVerticle extends AbstractVerticle {
       parser.end();
       routingContext.response().end(Json.encodeToBuffer(accumulator.toStatistics()));
     });
-  }
-
-  private static class Accumulator {
-    double total;
-    int count;
-    DataPoint min;
-    DataPoint max;
-
-    Statistics toStatistics() {
-      return new Statistics((count == 0) ? 0 : (total / count), min, max);
-    }
   }
 }
