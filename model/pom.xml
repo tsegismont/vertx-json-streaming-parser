@@ -33,7 +33,8 @@
       <dependency>
         <groupId>io.vertx</groupId>
         <artifactId>vertx-dependencies</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>${vertx.version}</version>
+        <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
@@ -43,7 +44,6 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
-      <version>3.5.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
