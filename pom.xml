@@ -35,6 +35,7 @@
     <module>classic</module>
     <module>streaming</module>
     <module>streaming-rx</module>
+    <module>gatling</module>
   </modules>
 
   <build>
