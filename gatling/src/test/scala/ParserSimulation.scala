@@ -38,7 +38,7 @@ class ParserSimulation extends Simulation {
 
   val simulation = repeat(loops, "n") {
     exec(http("Report ${n}")
-      .post("/data")
+      .post("/compute")
       .body(RawFileBody(jsonBody)).asJSON
     ).pause(interval)
   }

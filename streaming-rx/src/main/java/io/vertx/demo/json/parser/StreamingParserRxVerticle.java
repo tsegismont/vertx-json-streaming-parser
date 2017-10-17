@@ -38,7 +38,7 @@ public class StreamingParserRxVerticle extends AbstractVerticle {
   public void start() throws Exception {
     Router router = Router.router(vertx);
     router.route().handler(ResponseContentTypeHandler.create());
-    router.post("/data").consumes("application/json").produces("application/json").handler(this::computeStats);
+    router.post("/compute").consumes("application/json").produces("application/json").handler(this::computeStats);
 
     vertx.createHttpServer()
       .requestHandler(router::accept)
