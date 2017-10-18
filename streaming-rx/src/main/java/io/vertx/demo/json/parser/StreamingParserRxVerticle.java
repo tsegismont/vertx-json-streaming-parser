@@ -55,6 +55,8 @@ public class StreamingParserRxVerticle extends AbstractVerticle {
       .filter(jsonEvent -> jsonEvent.type() == VALUE)
       .map(jsonEvent -> jsonEvent.mapTo(DataPoint.class))
       .collect(Accumulator::new, Accumulator::accumulate).map(Accumulator::toStatistics)
-      .subscribe(statistics -> routingContext.response().end(Buffer.newInstance(Json.encodeToBuffer(statistics))));
+      .subscribe(statistics -> {
+        routingContext.response().end(Buffer.newInstance(Json.encodeToBuffer(statistics)));
+      }, routingContext::fail);
   }
 }
