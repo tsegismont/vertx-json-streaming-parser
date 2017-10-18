@@ -49,19 +49,16 @@ public class StreamingParserVerticle extends AbstractVerticle {
 
     Accumulator accumulator = new Accumulator();
 
-    JsonParser parser = JsonParser.newParser();
-    parser.objectValueMode();
-    parser.handler(event -> {
+    JsonParser.newParser(request)
+      .objectValueMode()
+      .exceptionHandler(routingContext::fail)
+      .endHandler(v -> {
+        routingContext.response().end(Json.encodeToBuffer(accumulator.toStatistics()));
+      }).handler(event -> {
       if (event.type() == VALUE) {
         DataPoint dataPoint = event.mapTo(DataPoint.class);
         accumulator.accumulate(dataPoint);
       }
-    });
-    request.handler(parser);
-
-    request.endHandler(v -> {
-      parser.end();
-      routingContext.response().end(Json.encodeToBuffer(accumulator.toStatistics()));
     });
   }
 }
